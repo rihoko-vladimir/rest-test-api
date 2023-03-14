@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  test-api:
+    container_name: "TestApi"
+    build:
+      context: .
+      dockerfile: TestTaskApi/Dockerfile
+    ports:
+      - "8080:80"
+    networks: 
+      - database_network
+      
+      
+networks:
+  database_network:
+    external: false
