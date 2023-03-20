@@ -11,4 +11,6 @@ public interface IEmployeeRepository
     public Task<Employee?> PatchEmployeeAsync(Guid userId, Employee employee);
 
     public Task<IEnumerable<Employee>> GetAllEmployeesAsync();
+
+    public Task<bool> RemoveEmployeeAsync(Guid employeeId);
 }

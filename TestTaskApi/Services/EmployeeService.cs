@@ -74,4 +74,24 @@ public class EmployeeService : IEmployeeService
             return Result.Error<IEnumerable<Employee>>(e, HttpStatusCode.InternalServerError);
         }
     }
+
+    public async Task<Result> RemoveEmployeeAsync(Guid employeeId)
+    {
+        try
+        {
+            var employee = await _employeeRepository.GetEmployeeByGuidAsync(employeeId);
+
+            if (employee is null) return Result.Error("Job wasn't found", HttpStatusCode.NotFound);
+
+            var wasRemoved = await _employeeRepository.RemoveEmployeeAsync(employeeId);
+
+            return wasRemoved
+                ? Result.Success()
+                : Result.Error("Unknown error occured", HttpStatusCode.InternalServerError);
+        }
+        catch (Exception e)
+        {
+            return Result.Error(e, HttpStatusCode.InternalServerError);
+        }
+    }
 }

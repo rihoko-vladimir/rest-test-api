@@ -37,7 +37,7 @@ public class JobInformationRepository : IJobInformationRepository
 
         if (jobToRemove is null) return false;
 
-        _context.Remove(jobToRemove);
+        _context.JobTitles.Remove(jobToRemove);
 
         await _context.SaveChangesAsync();
 
@@ -51,5 +51,28 @@ public class JobInformationRepository : IJobInformationRepository
             .ToListAsync();
 
         return allJobs;
+    }
+
+    public async Task<JobTitle?> PatchJobTitleAsync(Guid jobTileId, JobTitle patchJobTitle)
+    {
+        var jobInDatabase =
+            await _context
+                .JobTitles
+                .Include(employee1 => employee1.Employees)
+                .FirstOrDefaultAsync(job => job.Id.Equals(jobTileId));
+
+        if (jobInDatabase is null) return null;
+
+        jobInDatabase.JobTitleName = patchJobTitle.JobTitleName;
+        jobInDatabase.Grade = patchJobTitle.Grade;
+        jobInDatabase.Employees = patchJobTitle.Employees;
+
+        await _context.SaveChangesAsync();
+
+        var savedEmployee =
+            await _context.JobTitles
+                .FirstOrDefaultAsync(job => job.Id.Equals(jobInDatabase.Id));
+
+        return savedEmployee;
     }
 }

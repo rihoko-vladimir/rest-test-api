@@ -112,4 +112,24 @@ public class EmployeeController : ControllerBase
             ? StatusCode((int)patchResult.StatusCode, patchResult.Message)
             : Ok(patchResult.Value);
     }
+
+    [HttpDelete]
+    [Route("remove")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> RemoveEmployee([FromQuery] string employeeId)
+    {
+        var wasParsed = Guid.TryParse(employeeId, out var parsedGuid);
+
+        if (!wasParsed)
+            return BadRequest("Incorrect guid was provided");
+
+        var result = await _employeeService.RemoveEmployeeAsync(parsedGuid);
+
+        return !result.IsSuccess
+            ? StatusCode((int)result.StatusCode, result.Message)
+            : Ok();
+    }
 }

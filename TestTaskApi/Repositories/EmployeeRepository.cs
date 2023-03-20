@@ -64,4 +64,18 @@ public class EmployeeRepository : IEmployeeRepository
 
         return employees;
     }
+
+    public async Task<bool> RemoveEmployeeAsync(Guid employeeId)
+    {
+        var employeeToRemove = await _context.Employees
+            .FirstOrDefaultAsync(emp => emp.Id.Equals(employeeId));
+
+        if (employeeToRemove is null) return false;
+
+        _context.Employees.Remove(employeeToRemove);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }

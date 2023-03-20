@@ -11,4 +11,6 @@ public interface IJobInformationRepository
     public Task<bool> RemoveJob(Guid jobTitleId);
 
     public Task<IEnumerable<JobTitle>> GetAllJobsAsync();
+
+    public Task<JobTitle?> PatchJobTitleAsync(Guid jobTitleId, JobTitle patchJobTitle);
 }

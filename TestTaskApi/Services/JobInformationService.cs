@@ -82,4 +82,20 @@ public class JobInformationService : IJobInformationService
             return Result.Error<IEnumerable<JobTitle>>(e, HttpStatusCode.InternalServerError);
         }
     }
+
+    public async Task<Result<JobTitle>> PatchJobTitleAsync(Guid jobTitleId, JobTitle patchJobTitle)
+    {
+        try
+        {
+            var patchedJobTitle = await _jobInformationRepository.PatchJobTitleAsync(jobTitleId, patchJobTitle);
+
+            return patchedJobTitle is not null
+                ? Result.Success(patchedJobTitle)
+                : Result.Error<JobTitle>("Job wasn't found", HttpStatusCode.NotFound);
+        }
+        catch (Exception e)
+        {
+            return Result.Error<JobTitle>(e, HttpStatusCode.InternalServerError);
+        }
+    }
 }
