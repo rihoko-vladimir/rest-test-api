@@ -4,7 +4,7 @@ namespace TestTaskApi.Models.Entities;
 
 public class Employee
 {
-    [Key] public Guid Id { get; set; } = Guid.NewGuid();
+    [Key] public Guid Id { get; set; }
 
     public string NameAndSurname { get; set; }
 

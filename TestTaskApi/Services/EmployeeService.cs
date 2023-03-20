@@ -103,10 +103,7 @@ public class EmployeeService : IEmployeeService
 
             var wasRemoved = await _employeeRepository.RemoveEmployeeAsync(employeeId);
 
-            if (wasRemoved)
-            {
-                return Result.Success();
-            }
+            if (wasRemoved) return Result.Success();
 
             Log.Error("Server error occured");
 

@@ -65,12 +65,25 @@ public class JobInformationRepository : IJobInformationRepository
 
         jobInDatabase.JobTitleName = patchJobTitle.JobTitleName;
         jobInDatabase.Grade = patchJobTitle.Grade;
-        jobInDatabase.Employees = patchJobTitle.Employees;
+
+        if (patchJobTitle.Employees.Count == 0)
+            jobInDatabase.Employees = new List<Employee>();
+        else
+            jobInDatabase.Employees.ForEach(employee =>
+            {
+                var emp = patchJobTitle.Employees.FirstOrDefault(title => title.Id.Equals(employee.Id));
+
+                if (emp is null) return;
+
+                employee.NameAndSurname = emp.NameAndSurname;
+                employee.DateOfBirth = emp.DateOfBirth;
+            });
 
         await _context.SaveChangesAsync();
 
         var savedEmployee =
             await _context.JobTitles
+                .Include(title => title.Employees)
                 .FirstOrDefaultAsync(job => job.Id.Equals(jobInDatabase.Id));
 
         return savedEmployee;

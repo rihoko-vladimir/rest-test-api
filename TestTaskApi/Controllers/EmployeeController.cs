@@ -101,6 +101,7 @@ public class EmployeeController : ControllerBase
         {
             Log.Error("An error occured, because there were a malformed patch request. {Exception}, {Message}",
                 e.GetType().FullName, e.Message);
+
             return BadRequest(e.Message);
         }
 
@@ -108,9 +109,12 @@ public class EmployeeController : ControllerBase
 
         var patchResult = await _employeeService.PatchEmployeeAsync(parsedGuid, entity);
 
-        return !patchResult.IsSuccess
-            ? StatusCode((int)patchResult.StatusCode, patchResult.Message)
-            : Ok(patchResult.Value);
+
+        if (!patchResult.IsSuccess) return StatusCode((int)patchResult.StatusCode, patchResult.Message);
+
+        var mappedResult = _mapper.Map<EmployeeResponse>(patchResult.Value);
+
+        return Ok(mappedResult);
     }
 
     [HttpDelete]

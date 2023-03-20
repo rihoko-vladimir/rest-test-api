@@ -45,7 +45,20 @@ public class EmployeeRepository : IEmployeeRepository
 
         employeeInDatabase.NameAndSurname = employee.NameAndSurname;
         employeeInDatabase.DateOfBirth = employee.DateOfBirth;
-        employeeInDatabase.JobTitles = employee.JobTitles;
+
+        if (employee.JobTitles.Count == 0)
+            employeeInDatabase.JobTitles = new List<JobTitle>();
+        else
+            employeeInDatabase.JobTitles.ForEach(job =>
+            {
+                var jobTitle = employee.JobTitles.FirstOrDefault(title => title.Id.Equals(job.Id));
+
+                if (jobTitle is null) return;
+
+                job.JobTitleName = jobTitle.JobTitleName;
+                job.Grade = jobTitle.Grade;
+            });
+
 
         await _context.SaveChangesAsync();
 

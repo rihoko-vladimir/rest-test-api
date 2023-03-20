@@ -12,6 +12,11 @@ public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Employee> Employees { get; set; }
     public DbSet<JobTitle> JobTitles { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.EnableSensitiveDataLogging();
+    }
+
     [Obsolete("Obsolete")]
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
