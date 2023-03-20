@@ -17,6 +17,7 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<Employee?> GetEmployeeByGuidAsync(Guid userId)
     {
         var employee = await _context.Employees
+            .Include(employee1 => employee1.JobTitles)
             .FirstOrDefaultAsync(
                 employee1 => employee1.Id.Equals(userId));
 
@@ -35,7 +36,10 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<Employee?> PatchEmployeeAsync(Guid userId, Employee employee)
     {
         var employeeInDatabase =
-            await _context.Employees.FirstOrDefaultAsync(dbEmployee => dbEmployee.Id.Equals(userId));
+            await _context
+                .Employees
+                .Include(employee1 => employee1.JobTitles)
+                .FirstOrDefaultAsync(dbEmployee => dbEmployee.Id.Equals(userId));
 
         if (employeeInDatabase is null) return null;
 
@@ -53,7 +57,10 @@ public class EmployeeRepository : IEmployeeRepository
 
     public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
     {
-        var employees = await _context.Employees.ToListAsync();
+        var employees = await _context
+            .Employees
+            .Include(employee1 => employee1.JobTitles)
+            .ToListAsync();
 
         return employees;
     }

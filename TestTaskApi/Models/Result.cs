@@ -35,7 +35,7 @@ public struct Result<T>
         IsSuccess = false;
         Value = default;
         StatusCode = statusCode;
-        Message = string.Empty;
+        Message = exception.Message;
     }
 }
 
@@ -61,7 +61,7 @@ public struct Result
         Exception = exception ?? throw new ArgumentNullException(nameof(exception));
         StatusCode = statusCode;
         IsSuccess = false;
-        Message = string.Empty;
+        Message = exception.Message;
     }
 
     public Result(string message, HttpStatusCode statusCode)

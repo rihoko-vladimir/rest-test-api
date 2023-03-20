@@ -17,6 +17,7 @@ public class JobInformationRepository : IJobInformationRepository
     public async Task<JobTitle?> GetJobInfoAsync(Guid jobTitleId)
     {
         var jobTitle = await _context.JobTitles
+            .Include(title => title.Employees)
             .FirstOrDefaultAsync(dbJob => dbJob.Id.Equals(jobTitleId));
 
         return jobTitle;
@@ -45,7 +46,9 @@ public class JobInformationRepository : IJobInformationRepository
 
     public async Task<IEnumerable<JobTitle>> GetAllJobsAsync()
     {
-        var allJobs = await _context.JobTitles.ToListAsync();
+        var allJobs = await _context.JobTitles
+            .Include(title => title.Employees)
+            .ToListAsync();
 
         return allJobs;
     }

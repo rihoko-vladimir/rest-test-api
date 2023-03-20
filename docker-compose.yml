@@ -8,7 +8,20 @@ services:
       dockerfile: TestTaskApi/Dockerfile
     ports:
       - "8080:80"
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Development"
     networks: 
+      - database_network
+  
+  
+  database:
+    container_name: "MySql"
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=superstrongPASSword"
+    networks:
       - database_network
       
       

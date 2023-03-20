@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TestTaskApi.Models.Entities;
 
 public class JobTitle
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
     public string JobTitleName { get; set; }
 
