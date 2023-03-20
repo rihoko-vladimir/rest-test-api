@@ -45,6 +45,9 @@ public class JobInformationService : IJobInformationService
     {
         try
         {
+            if (createJobTitle.Grade is < 1 or > 15)
+                return Result.Error<Guid>("Incorrect grade provided", HttpStatusCode.BadRequest);
+
             var guid = await _jobInformationRepository.CreateNewJobAsync(createJobTitle);
 
             Log.Information("Created new job - {JobName}", createJobTitle.JobTitleName);
@@ -116,6 +119,9 @@ public class JobInformationService : IJobInformationService
     {
         try
         {
+            if (patchJobTitle.Grade is < 1 or > 15)
+                return Result.Error<JobTitle>("Incorrect grade provided", HttpStatusCode.BadRequest);
+
             var patchedJobTitle = await _jobInformationRepository.PatchJobTitleAsync(jobTitleId, patchJobTitle);
 
             if (patchedJobTitle is not null) return Result.Success(patchedJobTitle);
