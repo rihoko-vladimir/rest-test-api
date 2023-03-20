@@ -1,4 +1,5 @@
 using System.Net;
+using Serilog;
 using TestTaskApi.Interfaces.Repositories;
 using TestTaskApi.Interfaces.Services;
 using TestTaskApi.Models;
@@ -21,12 +22,16 @@ public class EmployeeService : IEmployeeService
         {
             var employee = await _employeeRepository.GetEmployeeByGuidAsync(userId);
 
-            return employee is not null
-                ? Result.Success(employee)
-                : Result.Error<Employee>("Employee wasn't found", HttpStatusCode.NotFound);
+            if (employee is not null) return Result.Success(employee);
+
+            Log.Information("Employee wasn't found - {Id}", userId);
+
+            return Result.Error<Employee>("Employee wasn't found", HttpStatusCode.NotFound);
         }
         catch (Exception e)
         {
+            Log.Error("Server error occured {ExceptionMessage}", e.Message);
+
             return Result.Error<Employee>(e, HttpStatusCode.InternalServerError);
         }
     }
@@ -41,6 +46,8 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
+            Log.Error("Server error occured {ExceptionMessage}", e.Message);
+
             return Result.Error<Guid>(e, HttpStatusCode.InternalServerError);
         }
     }
@@ -51,12 +58,16 @@ public class EmployeeService : IEmployeeService
         {
             var patchedEmployee = await _employeeRepository.PatchEmployeeAsync(userId, employee);
 
-            return patchedEmployee is not null
-                ? Result.Success(patchedEmployee)
-                : Result.Error<Employee>("Employee wasn't found", HttpStatusCode.NotFound);
+            if (patchedEmployee is not null) return Result.Success(patchedEmployee);
+
+            Log.Information("Employee wasn't found - {Id}", userId);
+
+            return Result.Error<Employee>("Employee wasn't found", HttpStatusCode.NotFound);
         }
         catch (Exception e)
         {
+            Log.Error("Server error occured {ExceptionMessage}", e.Message);
+
             return Result.Error<Employee>(e, HttpStatusCode.InternalServerError);
         }
     }
@@ -71,6 +82,8 @@ public class EmployeeService : IEmployeeService
         }
         catch (Exception e)
         {
+            Log.Error("Server error occured {ExceptionMessage}", e.Message);
+
             return Result.Error<IEnumerable<Employee>>(e, HttpStatusCode.InternalServerError);
         }
     }
@@ -81,16 +94,28 @@ public class EmployeeService : IEmployeeService
         {
             var employee = await _employeeRepository.GetEmployeeByGuidAsync(employeeId);
 
-            if (employee is null) return Result.Error("Job wasn't found", HttpStatusCode.NotFound);
+            if (employee is null)
+            {
+                Log.Information("Employee wasn't found - {Id}", employeeId);
+
+                return Result.Error("Employee wasn't found", HttpStatusCode.NotFound);
+            }
 
             var wasRemoved = await _employeeRepository.RemoveEmployeeAsync(employeeId);
 
-            return wasRemoved
-                ? Result.Success()
-                : Result.Error("Unknown error occured", HttpStatusCode.InternalServerError);
+            if (wasRemoved)
+            {
+                return Result.Success();
+            }
+
+            Log.Error("Server error occured");
+
+            return Result.Error("Unknown error occured", HttpStatusCode.InternalServerError);
         }
         catch (Exception e)
         {
+            Log.Error("Server error occured {ExceptionMessage}", e.Message);
+
             return Result.Error(e, HttpStatusCode.InternalServerError);
         }
     }
