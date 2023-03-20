@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TestTaskApi.Models.Entities;
 
 public class Employee
 {
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
 
     public string NameAndSurname { get; set; }
 
